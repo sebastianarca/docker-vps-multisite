@@ -1,0 +1,3 @@
+/docker/mysql/data/**
+/docker/tmp/**
+/public_html/**

@@ -1,0 +1,59 @@
+version: '3.1'
+
+networks:
+  vps_nginx-proxy:
+    external: true
+
+services:
+  wp_wordpresstest_nginx:
+    build: ./base
+    image: wp_wordpresstest_nginx
+    restart: always
+    container_name: wp_wordpresstest_nginx
+    volumes:
+      - ../public_html:/var/www/html
+    environment:
+      - VIRTUAL_HOST=wordpresstest.com,www.wordpresstest.com
+      - LETSENCRYPT_HOST=wordpresstest.com,www.wordpresstest.com
+      - LETSENCRYPT_EMAIL=real.email@gmail.com
+    expose:
+      - "80"
+    links:
+      - wp_wordpresstest:wp_wordpresstest
+      - wp_wordpresstest_mysql:wp_wordpresstest_mysql
+    depends_on:
+      - wp_wordpresstest
+    networks:
+      - vps_nginx-proxy
+
+  wp_wordpresstest:
+    image: wordpress:php7.4-fpm
+    restart: always
+    container_name: wp_wordpresstest
+    volumes:
+      - ./tmp:/tmp
+      - ../public_html:/var/www/html
+    env_file:
+      - 'vars.env'
+    expose:
+      - "9000"
+    links:
+      - wp_wordpresstest_mysql:wp_wordpresstest_mysql
+    depends_on:
+      - wp_wordpresstest_mysql
+    networks:
+      - vps_nginx-proxy
+
+  wp_wordpresstest_mysql:
+    image: mysql:5.7
+    container_name: wp_wordpresstest_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+    expose:
+      -  "3306"
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql/data:/var/lib/mysql
+    networks:
+      - vps_nginx-proxy

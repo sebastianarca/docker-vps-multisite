@@ -1,0 +1,63 @@
+version: '3'
+
+# #####
+# Debido a que LetsEncrypt requiere que el dominio este configurado en los DNS y con acceso a publico para gestionar los certificado TLS, se deja comentado.
+#
+# Descomentar las lineas de este archivo, para disponer de HTTPS.
+#
+# Una vez obtenidos los certificados, se puede volver a comentar y copiar el directorios "certs", para disponer de HTTPS en un entorno local.
+# #####
+
+
+## Al lanzar con la opcion -p vps (docker-compose -p vps up -d) el nombre de la red queda como "vps_nginx-proxy"
+networks:
+  nginx-proxy:
+    driver: bridge
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - default
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs:ro
+      - html:/usr/share/nginx/html
+      - vhostd:/etc/nginx/vhost.d
+    # labels:
+    #   - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
+
+  # letsencrypt:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   container_name: letsencrypt
+  #   restart: always
+  #   networks:
+  #     - default
+  #     - nginx-proxy
+  #   environment:
+  #     - NGINX_PROXY_CONTAINER=nginx-proxy
+  #     - DEFAULT_EMAIL=real.email@gmail.com
+  #   volumes:
+  #     - ./certs:/etc/nginx/certs:rw
+  #     - html:/usr/share/nginx/html
+  #     - vhostd:/etc/nginx/vhost.d
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes: 
+  certs:
+  html:
+  vhostd:
+
+## DOCUMENTACION UTIL
+# https://github.com/pablokbs/peladonerd/blob/master/varios/1/docker-compose.yaml
+# OFICIAL: https://github.com/nginx-proxy/nginx-proxy
+# OFICIAL: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
+# SOLUCIONAR LA PARTE DE NETWORKING: https://stackoverflow.com/questions/53580128/isolate-containers-on-the-jwilder-nginx-proxy-network
+# SETEAR NOMBRES DE RED: https://docs.docker.com/compose/reference/envvars/#compose_project_name
+# https://docs.docker.com/compose/networking/
