@@ -32,7 +32,7 @@ services:
     container_name: wp_wordpresstest
     volumes:
       - ./tmp:/tmp
-      - ../www:/var/www/html
+      - ../www/public:/var/www/html # Wordpress carga todo los archivos como publicos
     env_file:
       - 'vars.env'
     expose:

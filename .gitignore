@@ -1,0 +1,9 @@
+/certs/**
+/**
+!/wordpresstest.com
+!.gitignore
+!backupDB-wordpresstest.sh
+!docker-compose.yml
+!docker-start.sh
+!docker-stop.sh
+!README.md
