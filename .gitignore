@@ -1,5 +1,8 @@
 /certs/**
 /**
+/docker_mysql_prod/data/**
+/docker_mysql_test/data/**
+
 !/wordpresstest.com
 !.gitignore
 !backupDB-wordpresstest.sh
@@ -7,3 +10,5 @@
 !docker-start.sh
 !docker-stop.sh
 !README.md
+!/docker_mysql_test
+!/docker_mysql_prod
