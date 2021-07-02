@@ -20,7 +20,9 @@ services:
       - "80"
     links:
       - wp_wordpresstest:wp_wordpresstest
-      - wp_wordpresstest_mysql:wp_wordpresstest_mysql
+    # Registra la vinculacion en /etc/hosts
+    extra_hosts:
+      - "docker-mysql.local:172.17.0.1"
     depends_on:
       - wp_wordpresstest
     networks:
@@ -37,27 +39,9 @@ services:
       - 'vars.env'
     expose:
       - "9000"
-    links:
-      - wp_wordpresstest_mysql:wp_wordpresstest_mysql
-    depends_on:
-      - wp_wordpresstest_mysql
-    networks:
-      - vps_nginx-proxy
-
-  wp_wordpresstest_mysql:
-    image: mysql:latest
-    container_name: wp_wordpresstest_mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      # Los siguientes datos deben coincidir con /docker/vars.env
-      - MYSQL_DATABASE=custom 
-      - MYSQL_USER=wp_mysql_user
-      - MYSQL_PASSWORD=wp_mysql_pass_1234
-    expose:
-      -  "3306"
-    volumes:
-      - ./mysql/conf.d:/etc/mysql/conf.d
-      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./mysql/data:/var/lib/mysql
+    # Registra la vinculacion en /etc/hosts
+    # Lo siguiente se debe registrar en ./docker/vars.env
+    extra_hosts:
+      - "docker-mysql.local:172.17.0.1"
     networks:
       - vps_nginx-proxy

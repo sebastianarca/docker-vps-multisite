@@ -1,6 +1,6 @@
 #!/bin/bash
 _now=$(date +"%Y%m%d")
-_mysqlContainer='wp_wordpresstest_mysql'
+_mysqlContainer='mysql_prod'
 _mysqlUser='wp_mysql_user'
 _mysqlPass='wp_mysql_pass_1234'
 _mysqlDBName='custom'

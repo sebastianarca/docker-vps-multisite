@@ -15,19 +15,57 @@ networks:
     driver: bridge
 
 services:
+  mysql_prod:
+    image: mysql:latest
+    container_name: mysql_prod
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      # Los siguientes son una base de datos con usuario por default
+      - MYSQL_DATABASE=custom 
+      - MYSQL_USER=wp_mysql_user
+      - MYSQL_PASSWORD=wp_mysql_pass_1234
+    ports:
+      - "3300:3306"
+    volumes:
+      - ./docker_mysql_prod/conf.d:/etc/mysql/conf.d
+      - ./docker_mysql_prod/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./docker_mysql_prod/data:/var/lib/mysql
+    networks:
+      - default
+      - nginx-proxy
+  
+  mysql_test:
+    image: mysql:latest
+    container_name: mysql_test
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      # Los siguientes son una base de datos con usuario por default
+      - MYSQL_DATABASE=custom 
+      - MYSQL_USER=wp_mysql_user
+      - MYSQL_PASSWORD=wp_mysql_pass_1234
+    ports:
+      - "3301:3306"
+    volumes:
+      - ./docker_mysql_test/conf.d:/etc/mysql/conf.d
+      - ./docker_mysql_test/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./docker_mysql_test/data:/var/lib/mysql
+    networks:
+      - default
+      - nginx-proxy
+
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
     restart: always
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
     networks:
       - default
       - nginx-proxy
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs:ro
+      # - ./certs:/etc/nginx/certs:ro
       - html:/usr/share/nginx/html
       - vhostd:/etc/nginx/vhost.d
     # labels:
