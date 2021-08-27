@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+  networks:
+    vps_nginx-proxy:
+      external: true
+
+  statichtml_nginx:
+    build: ./base
+    image: statichtml_nginx
+    restart: always
+    container_name: statichtml_nginx
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      - ../www:/var/www/html
+    environment:
+      # Para evitar error 301 redireccion recursiva
+      - HTTPS_METHOD=noredirect
+      - VIRTUAL_HOST=statichtml.com
+      #- LETSENCRYPT_HOST=statichtml.com
+      #- LETSENCRYPT_EMAIL=real.email@gmail.com
+    networks:
+      - vps_nginx-proxy

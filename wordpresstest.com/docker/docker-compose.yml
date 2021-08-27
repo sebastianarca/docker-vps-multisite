@@ -18,6 +18,7 @@ services:
       - LETSENCRYPT_EMAIL=real.email@gmail.com
     expose:
       - "80"
+      - "443"
     links:
       - wp_wordpresstest:wp_wordpresstest
     # Registra la vinculacion en /etc/hosts
@@ -43,5 +44,20 @@ services:
     # Lo siguiente se debe registrar en ./docker/vars.env
     extra_hosts:
       - "docker-mysql.local:172.17.0.1"
+    networks:
+      - vps_nginx-proxy
+  # Entrar al contenedor con: docker-compose run wp_skatharemeras bash
+  # Luego se puede ejecutar el cli como: wp plugin list
+  wp_wordpresstest_cli:
+    image: wordpress:cli
+    container_name: wp_wordpresstest_cli
+    volumes:
+      - ../www/public:/var/www/html
+    env_file:
+      - 'vars.env'
+    extra_hosts:
+      - "docker-mysql.local:172.17.0.1"
+    links:
+      - wp_wordpresstest:wp_wordpresstest
     networks:
       - vps_nginx-proxy
